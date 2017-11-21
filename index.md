@@ -1,13 +1,11 @@
 ## committer Learning JAVA Notes
 
-```markdown
+
 1. [Java 抽象类与接口的区别](https://github.com/kmjueban/studious-funicular/edit/master/abstract.md)
 
 
-Syntax highlighted code block
 
-
-
+```markdown
 - Bulleted
 - List
 
