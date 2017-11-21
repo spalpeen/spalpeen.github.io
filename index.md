@@ -1,13 +1,9 @@
 ## committer Learning JAVA Notes
 
+```markdown
 1. [Java 抽象类与接口的区别](https://github.com/kmjueban/studious-funicular/edit/master/abstract.md)
 
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
-
-```markdown
 Syntax highlighted code block
 
 
@@ -23,6 +19,5 @@ Syntax highlighted code block
 [Link](url) and ![Image](src)
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
 
 
