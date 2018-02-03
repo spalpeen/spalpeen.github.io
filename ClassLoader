@@ -1,0 +1,12 @@
+ClassLoader加载流程及作用
+
+ClassLoader是用来加载class文件到JVM以供程序使用
+java程序可以动态加载类定义，而这个动态加载的机制就是通过ClassLoader来实现的
+当运行一个程序的时候，JVM启动，运行bootstrap classloader, 该ClassLoader加载核心的API（ExtClassLoader和AppCLassLoader也在此时被加载），
+然后ExtClassLoader加载扩展API，最后AppClassLoader加载CLASSPATH目录下定义的Class，这就是程序的基本流程。
+bootstrap classloader（启动类加载器）: 不是java语言编写而是JVM实现的一部分,在JVM运行的时候加载java核心的API以满足java程序的最基本需求
+ExtClassLoader:java程序实现的，用户定义的ClassLoader，用来加载Java的扩展API也就是/lib/ext中的类
+AppCladdLoader:java程序实现的，用户定义的ClassLoader，用来加载用户机器上CLASSPATH设置目录中的calss，通常在没有指定ClassLoader的情况下，用户自定义的类就由该ClassLoader进行加载
+
+
+ClassLoader加载方式
