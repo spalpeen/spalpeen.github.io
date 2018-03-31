@@ -36,7 +36,8 @@
  2.Rehash
  遍历原数组 把所有的Entry重新hash到新的数组，
 
- * hashmap在高并发情况下容易出现链表环
+ 
+* hashmap在高并发情况下容易出现链表环
  
  ## ConurrentHashMap
 
@@ -50,9 +51,14 @@
 
  #### put方法
  1.为输入的key做哈希运算，得到hash值
+ 
  2.通过hash值定位到对应的Segment
+ 
  3.获取可重入锁
+ 
  4再次通过hash值定位到Segment当中数组的具体位置
+ 
  5.插入或覆盖HashEntry对象
+ 
  6.释放锁
  
