@@ -12,13 +12,12 @@
 * 扩容方式为加倍现有的空间,超过1M，扩容时只会多扩展1M 最大长度为512M
 
 ##### 键值对
-   ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png)
+
    <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png" width="80%" height="40%" />
-   ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png =200x)
 
 ##### 批量键值对 批量读写 节省网络耗时开销
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png)
-    <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png" width="80%" height="40%" />
+    <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png" width="50%" height="40%" />
 
 ##### 过期和 set 命令扩展 对key设置过期时间 控制缓存失效时间
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string_setnx.png)
