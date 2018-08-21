@@ -13,19 +13,80 @@
 
 ##### 键值对
 
-   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png" width="80%" />
+```
+127.0.0.1:6379> set name kongming
+OK
+127.0.0.1:6379> get name
+"kongming"
+127.0.0.1:6379> exists name
+(integer) 1
+127.0.0.1:6379> del name
+(integer) 1
+127.0.0.1:6379> get name
+(nil)
+```
 
 ##### 批量键值对 批量读写 节省网络耗时开销
 
-   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png" width="80%"/>
+```
+127.0.0.1:6379> set name1 kongming01
+OK
+127.0.0.1:6379> set name2 kongming02
+OK
+127.0.0.1:6379> mget name1 name2
+1) "kongming01"
+2) "kongming02"
+127.0.0.1:6379> mset name1 zhangsan name2 lisi
+OK
+127.0.0.1:6379> mget name1 name2
+1) "zhangsan"
+2) "lisi"
+```
 
 ##### 过期和 set 命令扩展 对key设置过期时间 控制缓存失效时间
-
-   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string_setnx.png" width="80%" />
+```
+127.0.0.1:6379> set name kongming
+OK
+127.0.0.1:6379> get name
+"kongming"
+127.0.0.1:6379> expire name 5
+(integer) 1
+127.0.0.1:6379> get name
+"kongming"
+127.0.0.1:6379> get name
+(nil)
+127.0.0.1:6379> setex name 5 kongming
+OK
+127.0.0.1:6379> get name
+"kongming"
+127.0.0.1:6379> get name
+(nil)
+127.0.0.1:6379> setnx name kongming
+(integer) 1
+127.0.0.1:6379> get name
+"kongming"
+127.0.0.1:6379> setnx name kongming01
+(integer) 0
+127.0.0.1:6379> get name
+"kongming"
+```
 
 ##### 计数  对于value为整数 可以让其进行自增操作
 
-   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_incr.png" width="80%"/>
+```
+127.0.0.1:6379> set age 18
+OK
+127.0.0.1:6379> incr age
+(integer) 19
+127.0.0.1:6379> incrby age 5
+(integer) 24
+127.0.0.1:6379> incrby age -5
+(integer) 19
+127.0.0.1:6379> set age 9223372036854775807
+OK
+127.0.0.1:6379> incr age
+(error) ERR increment or decrement would overflow
+```
 
 ---
 
