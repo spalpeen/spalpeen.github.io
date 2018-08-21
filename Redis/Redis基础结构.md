@@ -14,6 +14,7 @@
 ##### 键值对
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png)
    <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png" width="80%" height="40%" />
+   ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png =200x)
 
 ##### 批量键值对 批量读写 节省网络耗时开销
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png)
