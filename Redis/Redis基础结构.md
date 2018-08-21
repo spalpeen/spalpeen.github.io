@@ -3,8 +3,6 @@
 #### string(字符串)
 
   ![key->value](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_key_value.png)
-  
-  <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_key_value.png" width="50%" height="50%" />
 
 
 * 字符串string 是Redis最简单的数据结构,Redis所有的数据结构都是以唯一的key作为名称,通过这个唯一的key获取对应的value值,
@@ -15,15 +13,19 @@
 
 ##### 键值对
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png)
+   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string.png" width="80%" height="50%" />
 
 ##### 批量键值对 批量读写 节省网络耗时开销
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png)
+    <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_mstring.png" width="80%" height="50%" />
 
 ##### 过期和 set 命令扩展 对key设置过期时间 控制缓存失效时间
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string_setnx.png)
+   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string_setnx.png" width="80%" height="50%" />
 
 ##### 计数  对于value为整数 可以让其进行自增操作
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_incr.png)
+   <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_incr.png" width="80%" height="50%" />
 
 ---
 
