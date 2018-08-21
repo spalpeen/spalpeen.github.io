@@ -210,7 +210,7 @@ OK
 ---
 #### set(集合)
 
-  ![set](https://github.com/kmjueban/studious-funicular/blob/master/static/set.png)
+  ![set](https://github.com/kmjueban/studious-funicular/blob/master/static/set.gif)
 
 
 * Redis里的集合相当于hashSet ,内部的键值对是无须但唯一的,内部相当于一个特殊的字典,所有的value值为null
