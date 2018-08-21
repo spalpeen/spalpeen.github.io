@@ -20,7 +20,7 @@
    ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_string_setnx.png)
 
 ##### 计数  对于value为整数 可以让其进行自增操作
-   ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_inrc.png)
+   ![redis->string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_incr.png)
 
 ---
 
