@@ -3,6 +3,9 @@
 #### string(字符串)
 
   ![key->value](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_key_value.png)
+  
+  <img src="https://github.com/kmjueban/studious-funicular/blob/master/static/redis_key_value.png" width="50%" height="50%" />
+
 
 * 字符串string 是Redis最简单的数据结构,Redis所有的数据结构都是以唯一的key作为名称,通过这个唯一的key获取对应的value值,
   value结构的不同造成是数据结构差异的根本原因
