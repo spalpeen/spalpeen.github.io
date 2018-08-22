@@ -16,7 +16,6 @@
 
 2.如果逻辑执行过程中出现异常,del没有被执行,这样锁就永远不会被释放,造成死循环,于是我们给锁加上过期时间
 
-  ![lock](https://github.com/kmjueban/studious-funicular/blob/master/static/lock.gif)
 
 ```
 127.0.0.1:6379> setnx lock:name kongming
@@ -31,6 +30,7 @@
 3.如果在执行setnx后服务器断电expire没有被执行 也会造成死锁,这类问题的根本原因就是setnx与expire结合不是原子性的指令
 expire是依赖于setnx结果,如果setnx没有抢到锁,expire不会执行 所以事物也不能解决
 
+  ![lock](https://github.com/kmjueban/studious-funicular/blob/master/static/lock.gif)
 
 ```
 # set key value ex time nx 就是setnx与expire组合在一起的原子性指令(version >=2.8)
