@@ -16,6 +16,8 @@
 
 2.如果逻辑执行过程中出现异常,del没有被执行,这样锁就永远不会被释放,造成死循环,于是我们给锁加上过期时间
 
+  ![lock](https://github.com/kmjueban/studious-funicular/blob/master/static/lock.gif)
+
 ```
 127.0.0.1:6379> setnx lock:name kongming
 (integer) 1
