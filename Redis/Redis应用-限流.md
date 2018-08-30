@@ -41,4 +41,4 @@ public function is_action_allow($user_id,$action,$period,$max_count){
 下一期：
 2. 漏斗限流
 
- ![loudou](https://github.com/kmjueban/studious-funicular/blob/master/static/loudou.png)
+ ![loudou](https://github.com/kmjueban/studious-funicular/blob/master/static/loudou.jpg)
