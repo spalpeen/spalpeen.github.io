@@ -16,7 +16,7 @@
 abstract function is_action_allow(user_id,action,period,max_count);
 ```
 
- ![set](https://github.com/kmjueban/studious-funicular/blob/master/static/zset_time_window.png)
+ ![window](https://github.com/kmjueban/studious-funicular/blob/master/static/zset_time_window.png)
 
 
 * 这个限流中存在时间滑动窗口,我们可以用zset的score值来圈出这个时间窗口,我们只需要保留这个时间窗口内的计数
@@ -40,3 +40,5 @@ public function is_action_allow($user_id,$action,$period,$max_count){
 
 下一期：
 2. 漏斗限流
+
+ ![loudou](https://github.com/kmjueban/studious-funicular/blob/master/static/loudou.png)
