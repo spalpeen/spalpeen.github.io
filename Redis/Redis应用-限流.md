@@ -24,7 +24,7 @@ abstract function is_action_allow(user_id,action,period,max_count);
 
 ```
 public function is_action_allow($user_id,$action,$period,$max_count){
-	$key = $user_id.$action;
+	$key = $user_id.':'.$action;
 	$now = time();
 	$redis = new Redis();
 	$redis->zadd($key,$now,$now); 	//第一个参数为key 第二个参数为score 第三个参数为value
