@@ -13,6 +13,7 @@ select id from table where x0-r < x < x0+r and y0-r < y < y0+r
 
 * 在Redis里面经纬度使用52位的整数进行编码,放在zset里面,zset的value是元素的key,score 是 GeoHash 的 52 位整数值
 * 查询时使用score值进行排序
+
 #### 使用
 ```
 127.0.0.1:6379> geoadd friend 118.14205 40.000001 kongming01
