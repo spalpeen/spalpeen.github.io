@@ -1,12 +1,14 @@
 ## Redis基础数据结构
 
+* Redis基础数据结构分为5大类型,下面将分别对这5大类型进行简单的讲解
+* Redis所有的数据结构都是以唯一的key作为名称,通过这个唯一的key获取对应的value值,value结构的不同造成是数据结构差异的根本原因
+
 #### string(字符串)
 
   ![string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_key_value.png)
 
 
-* 字符串string 是Redis最简单的数据结构,Redis所有的数据结构都是以唯一的key作为名称,通过这个唯一的key获取对应的value值,
-  value结构的不同造成是数据结构差异的根本原因
+* 字符串string--Redis最简单的数据结构
 * 字符串最常用的就是缓存用户信息,我们可以将用户的信息JSON序列化为字符串塞进Redis来缓存
 * Redis的字符串是动态字符串,内部实现相采用预分配冗余空间来减少内存的频繁分配
 * 扩容方式为加倍现有的空间,超过1M,扩容时只会多扩展1M 最大长度为512M
@@ -99,7 +101,6 @@ OK
 * Redis 的列表结构通常用来做异步队列来使用,将任务结构体序列化为字符串塞进List,另起任务来轮询消费数据
 
 ##### 右边进左边出:队列
-
 
 ```
 127.0.0.1:6379> rpush name kongming01 kongming02 kongming03
@@ -273,6 +274,7 @@ OK
 127.0.0.1:6379> zrank kongming "kongming03"
 (integer) 0
 ```
+
 ##### 跳跃表
 因为zset需要支持随机的插入和删除,所以不好使用数组来表示
 普通的链表结构
