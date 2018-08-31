@@ -40,7 +40,4 @@ public function is_action_allow($user_id,$action,$period,$max_count){
 
 * 这种限流策略的基本思想就是当每一个行为到来都维护一个时间窗口,将窗口外的记录清理
 
-下一期：
-2. 漏斗限流
 
- ![loudou](https://github.com/kmjueban/studious-funicular/blob/master/static/loudou.jpg)
