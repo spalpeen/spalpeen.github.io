@@ -115,6 +115,8 @@ Scan语法
     9) "key9908"
    10) "key9929"
    11) "key9944"...
+```
+```
 127.0.0.1:6379> scan 0 match key99* count 10
 1) "3072"
 2) (empty list or set)   //游标不为0 便利没有结束
