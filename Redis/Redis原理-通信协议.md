@@ -81,12 +81,12 @@ OK //这里的OK实际上是+OK\r\n
 (error) ERR value is not an integer or out of range //实际为-ERR value...\r\n
 ```
 	
-	* 整数
+* 整数
 	
-	```
-	127.0.0.1:6379> incr age
-	(integer) 1   //这里的(integer) 1 实际上是 :1\r\n
-	```
+```
+127.0.0.1:6379> incr age
+(integer) 1   //这里的(integer) 1 实际上是 :1\r\n
+```
 	
 	* 多行字符串
 
