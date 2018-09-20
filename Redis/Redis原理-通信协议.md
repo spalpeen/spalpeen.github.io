@@ -54,32 +54,32 @@
 	*3\r\n:1\r\n:2\r\n:3\r\n
 	```
 
-##### 客户端-服务器
+##### 客户端->服务器
 
-	* 客户端向服务器发送的指令只有一种格式---多行字符串数组
-	* 举个例子:客户端发送指令 set name kongming 实际上会序列化成下面的字符串
+* 客户端向服务器发送的指令只有一种格式---多行字符串数组
+* 举个例子:客户端发送指令 set name kongming 实际上会序列化成下面的字符串
 	
-	```
-	*3\r\n$3\r\nset\r\n$4\r\nname\r\n$8\r\nkongming\r\n
-	```
+```
+*3\r\n$3\r\nset\r\n$4\r\nname\r\n$8\r\nkongming\r\n
+```
 
-##### 服务器-客户端
+##### 服务器->客户端
 
-	* 服务端回复客户端可以返回多种数据格式
+* 服务端回复客户端可以返回多种数据格式
 	
-	* 单行字符串
+* 单行字符串
 	
-	```
-	127.0.0.1:6379> set name kongming
-	OK //这里的OK实际上是+OK\r\n
-	```
+```
+127.0.0.1:6379> set name kongming
+OK //这里的OK实际上是+OK\r\n
+```
 
-	* 错误
+* 错误
 	
-	```
-	127.0.0.1:6379> incr name
-	(error) ERR value is not an integer or out of range //实际为-ERR value...\r\n
-	```
+```
+127.0.0.1:6379> incr name
+(error) ERR value is not an integer or out of range //实际为-ERR value...\r\n
+```
 	
 	* 整数
 	
