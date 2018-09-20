@@ -53,3 +53,61 @@
 	```
 	*3\r\n:1\r\n:2\r\n:3\r\n
 	```
+
+##### 客户端 -> 服务器
+	* 客户端向服务器发送的指令只有一种格式---多行字符串数组
+	* 举个例子:客户端发送指令 set name kongming 实际上会序列化成下面的字符串
+	
+	```
+	*3\r\n$3\r\nset\r\n$4\r\nname\r\n$8\r\nkongming\r\n
+	```
+
+##### 服务器 -> 客户端
+	* 服务端回复客户端可以返回多种数据格式
+	
+	* 单行字符串
+	
+	```
+	127.0.0.1:6379> set name kongming
+	OK //这里的OK实际上是+OK\r\n
+	```
+
+	* 错误
+	
+	```
+	127.0.0.1:6379> incr name
+	(error) ERR value is not an integer or out of range //实际为-ERR value...\r\n
+	```
+	
+	* 整数
+	
+	```
+	127.0.0.1:6379> incr age
+	(integer) 1   //这里的(integer) 1 实际上是 :1\r\n
+	```
+	
+	* 多行字符串
+
+	```
+	127.0.0.1:6379> get name
+	"kongming" //这里的"kongming" 实际上是 $8\r\nkongming\r\n
+	```
+
+	* 数组
+
+	```
+	127.0.0.1:6379> hset kongming name kongming
+	(integer) 1
+	127.0.0.1:6379> hset kongming age 18
+	(integer) 1
+	127.0.0.1:6379> hset kongming sex man
+	(integer) 1
+	127.0.0.1:6379> hgetall kongming
+	1) "name"		//key
+	2) "kongming"	//value
+	3) "age"
+	4) "18"
+	5) "sex"
+	6) "man"
+	//实际返回数据为 *6\r\n$4\r\nname\r\n$8\r\nkongming\r\n$3\r\nage\r\n$2\r\n18\r\n$3\r\nsex\r\n$3\r\nman\r\n
+	```
