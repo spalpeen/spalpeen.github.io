@@ -121,3 +121,33 @@ Background saving started
 
 ##### AOF原理
 
+* AOF持久化是存储redis服务器的修改指令记录顺序,记录在一个日志里,redis重启时就读取这个日志文件，对所有操作进行回放达到数据恢复的目的
+* redis在收到客户端指令后首先进行参数校验进行逻辑处理,在没有问题的情况下将修改指令存储到AOF日志中,也就是说先执行指令在进行日志存盘操作,在长期的操作工程中AOF日志会越来越长,机器宕机会恢复的时间将变的越来越长,所以需要对AOF日志瘦身
+
+##### AOF瘦身
+
+* redis提供BGREWRITEAOF指令对aof瘦身，原理就是开辟子进程对目前内存进行遍历转换为一系列redis操作指令序列化到AOF日志中,序列化完毕后再将操作期间发生的增量AOF日志追加到这个新的AOF日志中,代替老旧的AOF日志,瘦身结束
+
+* 当AOF日志大小增加指定百分比时，Redis能够自动重写日志文件，隐式调用BGREWRITEAOF
+
+```
+Automatic rewrite of the append only file.
+# Redis is able to automatically rewrite the log file implicitly calling                                                          
+# BGREWRITEAOF when the AOF log size grows by the specified percentage.
+#
+# This is how it works: Redis remembers the size of the AOF file after the
+# latest rewrite (if no rewrite has happened since the restart, the size of
+# the AOF at startup is used).
+#
+# This base size is compared to the current size. If the current size is
+# bigger than the specified percentage, the rewrite is triggered. Also
+# you need to specify a minimal size for the AOF file to be rewritten, this
+# is useful to avoid rewriting the AOF file even if the percentage increase
+# is reached but it is still pretty small.
+#
+# Specify a percentage of zero in order to disable the automatic AOF
+# rewrite feature.
+
+auto-aof-rewrite-percentage 100 //当前AOF日志是上次一日志的二倍
+auto-aof-rewrite-min-size 64mb	//rewrite 最小大小
+```
