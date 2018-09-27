@@ -151,3 +151,4 @@ Automatic rewrite of the append only file.
 auto-aof-rewrite-percentage 100 //当前AOF日志是上次一日志的二倍
 auto-aof-rewrite-min-size 64mb	//rewrite 最小大小
 ```
+
