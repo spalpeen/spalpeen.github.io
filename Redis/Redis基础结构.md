@@ -5,7 +5,7 @@
 
 #### string(字符串)
 
-  ![string](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_key_value.png)
+  ![string](../static/redis_key_value.png)
 
 
 * 字符串string--Redis最简单的数据结构
@@ -94,7 +94,7 @@ OK
 
 #### list(列表)
 
-  ![list](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_list.gif)
+  ![list](../static/redis_list.gif)
 
 * Redis的列表是链表而非数组,这意味着list的插入和删除操作非常快,时间复杂度为O(1),但是索引定位很慢,时间复杂度为O(n)
 * 当列表弹出最有一个元素时,数据结构被删除,内存被回收
@@ -160,7 +160,7 @@ OK
 
 ##### 快速列表
 
-  ![list](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_quick_list.png)
+  ![list](../static/redis_quick_list.png)
 
 
 * Redis 列表底层并不是一个简单的linkedlist 而是quicklist
@@ -171,7 +171,7 @@ OK
 ---
 #### hash(字典)
 
-  ![hash](https://github.com/kmjueban/studious-funicular/blob/master/static/hash.png)
+  ![hash](../static/hash.png)
 
 
 * Redis 的hash 相当于java里面的hashMap ,是无序字典,同样的数组+链表的二维结构
@@ -211,7 +211,7 @@ OK
 ---
 #### set(集合)
 
-  ![set](https://github.com/kmjueban/studious-funicular/blob/master/static/set.gif)
+  ![set](../static/set.gif)
 
 
 * Redis里的集合相当于hashSet ,内部的键值对是无须但唯一的,内部相当于一个特殊的字典,所有的value值为null
@@ -279,7 +279,7 @@ OK
 因为zset需要支持随机的插入和删除,所以不好使用数组来表示
 普通的链表结构
 
-  ![zset](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_zset_list.png)
+  ![zset](../static/redis_zset_list.png)
   
   
 我们需要这个链表按照分数进行排序,这意味当有新元素插入时,要定位到特定位置的插入点,才能保证链表有序
@@ -287,7 +287,7 @@ OK
 
 跳跃表类似于一种层级制,最下面的所有元素都会串起来,每隔几个元素就会选出一个代表,在将代表用指针串起来
 最终形成金字塔形状
-  ![zset](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_zset.png)
+  ![zset](../static/redis_zset.png)
   
 跳跃表之所以跳跃是因为内部的元素可能身兼数职 比如上图中间的元素同时处于L0,L1 和L2层 可以快速在不同层次之间跳跃
 定位插入点,先在顶层进行定位,然后下潜到下一级定位,一直下潜到最底层找到最合适的位置将新元素插入
