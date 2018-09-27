@@ -2,7 +2,7 @@
 
 #### 异步消息队列
 
-  ![set](https://github.com/kmjueban/studious-funicular/blob/master/static/redis_list_queue.png)
+  ![set](../static/redis_list_queue.png)
 
 * Redis的列表数据结构通常用来作为异步消息队列来使用
 * 使用rpush/lpush操作队列,使用lpop/rpop来出队列

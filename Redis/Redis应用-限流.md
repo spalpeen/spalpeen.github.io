@@ -18,7 +18,7 @@
 abstract function is_action_allow(user_id,action,period,max_count);
 ```
 
- ![window](https://github.com/kmjueban/studious-funicular/blob/master/static/zset_time_window.png)
+ ![window](../static/zset_time_window.png)
 
 
 * 这个限流中存在时间滑动窗口,我们可以用zset的score值来圈出这个时间窗口,我们只需要保留这个时间窗口内的计数

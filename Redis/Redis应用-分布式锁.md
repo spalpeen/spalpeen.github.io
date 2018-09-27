@@ -30,7 +30,7 @@
 3.如果在执行setnx后服务器断电expire没有被执行 也会造成死锁,这类问题的根本原因就是setnx与expire结合不是原子性的指令
 expire是依赖于setnx结果,如果setnx没有抢到锁,expire不会执行 所以事物也不能解决
 
-  ![lock](https://github.com/kmjueban/studious-funicular/blob/master/static/lock.gif)
+  ![lock](../static/lock.gif)
 
 ```
 # set key value ex time nx 就是setnx与expire组合在一起的原子性指令(version >=2.8)
