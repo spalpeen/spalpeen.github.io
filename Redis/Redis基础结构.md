@@ -90,11 +90,46 @@ OK
 (error) ERR increment or decrement would overflow
 ```
 
+##### 数据结构:动态字符串
+
+  ![string](../static/redis_string_structure.png)
+
+struct sdshdr {  
+     //已使用字符串的长度
+    int len;   
+    //buf数组中未使用字节的数量
+    int free;
+    //字节数组，用于保存字符串
+    char buf[];
+};
+
+新版本：
+struct __attribute__ ((__packed__)) sdshdr8 {
+      uint8_t len; /* used */
+      uint8_t alloc; /* excluding the header and null terminator */
+      unsigned char flags; /* 3 lsb of type, 5 unused bits */
+      char buf[];
+ };
+ unsigned char flags 为新增属性，记录该结构体的实际类型
+
+
+##### 扩容/回收机制
+扩容：Redis的字符串是动态字符串,内部实现采用预分配冗余空间来减少内存的频繁分配,扩容方式为加倍现有空间,超过1M,扩容时只会多扩容1M,最大长度为512M
+
+举两个例子：
+1.修改当前SDS 修改后len变成13个字节，将分配13个字节的free 长度共13+13+1 字节
+
+2.修改后len变为40M那么将分配1M的free长度，长度共为40M+1M+1字节
+
+回收：回收采用惰性回收方式 避免缩短字符串的内存重新分配
+
+举例：13字节的数据缩短 空出8个字节 字节并未回收而是放到free里
+
 ---
 
 #### list(列表)
 
-  ![list](../static/redis_list.gif)
+  ![list](../static/redis_list.png)
 
 * Redis的列表是链表而非数组,这意味着list的插入和删除操作非常快,时间复杂度为O(1),但是索引定位很慢,时间复杂度为O(n)
 * 当列表弹出最有一个元素时,数据结构被删除,内存被回收
@@ -169,6 +204,7 @@ OK
 
 
 ---
+
 #### hash(字典)
 
   ![hash](../static/hash.png)
@@ -178,6 +214,8 @@ OK
 * 不同的是字典的值只能是字符串, 另外rehash的方式不一样
 * 缺点 hash结构存储消耗高于单个字符串
 * 同字符串一样,hash结构中单个key也可以进行计数,指令为hincrby,和incr使用一样
+
+##### 使用
 
 ```
 127.0.0.1:6379> hset name kongming01 "this is kongming01"
@@ -208,10 +246,29 @@ OK
 (integer) 19
 ```
 
+##### 扩容：rehash
+
+* 操作的不断进行hash表保存的键值对逐渐增多或减少 为保持负载因子在稳定范围需要对哈希表进行相应的扩展或收缩使用rehash来操作
+
+* 步骤:
+
+	1：resize 
+	初始容量是有限的 当多次插入元素时结构达到一定的饱和度，Key映射位置发生冲突的几率会逐渐提高 这个时候HashMap需要扩展它的长度 也就是进行resize 而发生resize的因素有两个
+	Capacity : 当前长度
+	LoadFactor： 负载因子 默认0.75f
+	resize的条件公式为：Size > = Capacity * LoadFactor
+
+	2：扩容
+	创建一个新的Entry数组，长度为原数组的2倍
+
+	3：rehash
+	遍历原数组 把所有的Entry重新hash到新的数组
+
 ---
+
 #### set(集合)
 
-  ![set](../static/set.gif)
+  ![set](../static/set.png)
 
 
 * Redis里的集合相当于hashSet ,内部的键值对是无须但唯一的,内部相当于一个特殊的字典,所有的value值为null
