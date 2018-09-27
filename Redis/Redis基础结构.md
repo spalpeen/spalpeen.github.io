@@ -46,6 +46,7 @@ OK
 ```
 
 ##### 过期和 set 命令扩展 对key设置过期时间 控制缓存失效时间
+
 ```
 127.0.0.1:6379> set name kongming
 OK
@@ -94,6 +95,7 @@ OK
 
   ![string](../static/redis_string_structure.png)
 
+```
 struct sdshdr {  
      //已使用字符串的长度
     int len;   
@@ -102,16 +104,17 @@ struct sdshdr {
     //字节数组，用于保存字符串
     char buf[];
 };
+```
 
+```
 新版本：
 struct __attribute__ ((__packed__)) sdshdr8 {
       uint8_t len; /* used */
       uint8_t alloc; /* excluding the header and null terminator */
       unsigned char flags; /* 3 lsb of type, 5 unused bits */
       char buf[];
- };
- unsigned char flags 为新增属性，记录该结构体的实际类型
-
+ };//unsigned char flags 为新增属性，记录该结构体的实际类型
+```
 
 ##### 扩容/回收机制
 扩容：Redis的字符串是动态字符串,内部实现采用预分配冗余空间来减少内存的频繁分配,扩容方式为加倍现有空间,超过1M,扩容时只会多扩容1M,最大长度为512M
@@ -171,6 +174,7 @@ struct __attribute__ ((__packed__)) sdshdr8 {
 ##### 慢操作
 
 * index 相当于链表的get(int index) 方法,需要对链表进行遍历,性能随着index增大而变差
+
 * ltrim可以根据start_index,end_index 定义区间,区间之外数据全部砍掉,变为定长链表
 
 ```
@@ -211,8 +215,11 @@ OK
 
 
 * Redis 的hash 相当于java里面的hashMap ,是无序字典,同样的数组+链表的二维结构
+
 * 不同的是字典的值只能是字符串, 另外rehash的方式不一样
+
 * 缺点 hash结构存储消耗高于单个字符串
+
 * 同字符串一样,hash结构中单个key也可以进行计数,指令为hincrby,和incr使用一样
 
 ##### 使用
@@ -272,7 +279,9 @@ OK
 
 
 * Redis里的集合相当于hashSet ,内部的键值对是无须但唯一的,内部相当于一个特殊的字典,所有的value值为null
+
 * 当集合中最后一个元素被删除时,结构被回收 内存被回收
+
 * set结构可以用来存储中奖用户id,因为有去重功能
 
 ```
@@ -298,13 +307,16 @@ OK
 1) "kongming01"
 2) "kongming03"
 ```
-
+---
 
 #### zset(有序列表)
 
 * Redis 有序列表一方面是一个set 保证value的唯一性,另一方面可以给每个value赋一个分数 代表排序权重
+
 * 数据结构为跳跃表
+
 * zset 可以用来存储粉丝列表,value值为用户id,关注事件为分数,可以按关注时间排序
+
 * zset 最后一个value被移除后,数据结构自动删除,内存回收
 
 ```
@@ -333,8 +345,8 @@ OK
 ```
 
 ##### 跳跃表
-因为zset需要支持随机的插入和删除,所以不好使用数组来表示
-普通的链表结构
+
+因为zset需要支持随机的插入和删除,所以不好使用数组来表示普通的链表结构
 
   ![zset](../static/redis_zset_list.png)
   
@@ -344,6 +356,7 @@ OK
 
 跳跃表类似于一种层级制,最下面的所有元素都会串起来,每隔几个元素就会选出一个代表,在将代表用指针串起来
 最终形成金字塔形状
+
   ![zset](../static/redis_zset.png)
   
 跳跃表之所以跳跃是因为内部的元素可能身兼数职 比如上图中间的元素同时处于L0,L1 和L2层 可以快速在不同层次之间跳跃
@@ -364,7 +377,9 @@ list/set/hash/zset 这四种数据结构是容器型数据结构,它们共享下
 #### 过期时间
 
 * 过期时间是以对象为单位 而不是其中的子 key
+
 * 字符串设置了过期时间在调用set方法修改 过期时间会失效
+
 ```
 127.0.0.1:6379> set name kongming
 OK
