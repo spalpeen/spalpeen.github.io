@@ -11,6 +11,7 @@
   - [Redis原理-持久化](./Redis/Redis原理-持久化.md)
   - [Redis原理-线程IO模型](./Redis/Redis原理-线程IO模型.md)
   - [Redis原理-通信协议](./Redis/Redis原理-通信协议.md)
+  - [Redis原理-主从同步](./Redis/Redis原理-主从同步.md)
   
 - Java
   - [Java中Calendar对日期的操作](./Java/Calendar.md)
