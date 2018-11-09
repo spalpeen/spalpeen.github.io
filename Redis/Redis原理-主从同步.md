@@ -8,16 +8,17 @@
 
   主从数据库将保存相同的数据，概念上称这种现象为"数据库状态一致"
 
-  ![主从](../static/slaveof1.png)
+  ![slaveof1](../static/slaveof1.png)
 
-  ![主从](../static/slaveof2.png)
+  ![slaveof2](../static/slaveof2.png)
 
   比如说我们在主服务器上执行以下命令
-  ![主从](../static/slaveofmsg1.jpg)
+
+  ![slaveofmsg1](../static/slaveofmsg1.png)
 
   那么我们应该可以在主服务器上获取msg键的值又可以在从服务器上获取msg键的值，删除同样 
 
-  ![主从](../static/slaveofmsg2.jpg)
+  ![slaveofmsg2](../static/slaveofmsg2.png)
 
   复制偏移量
 
