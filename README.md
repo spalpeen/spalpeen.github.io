@@ -12,6 +12,7 @@
   - [Redis原理-线程IO模型](./Redis/Redis原理-线程IO模型.md)
   - [Redis原理-通信协议](./Redis/Redis原理-通信协议.md)
   - [Redis原理-主从同步](./Redis/Redis原理-主从同步.md)
+  - [Redis集群-Sentinel](./Redis/Redis集群-Sentinel.md)
   
 - Java
   - [Java中Calendar对日期的操作](./Java/Calendar.md)
