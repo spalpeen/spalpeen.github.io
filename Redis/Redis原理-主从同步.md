@@ -8,9 +8,9 @@
 
   主从数据库将保存相同的数据，概念上称这种现象为"数据库状态一致"
 
-  ![主从](../static/slaveof1.jpg)
+  ![主从](../static/slaveof1.png)
 
-  ![主从](../static/slaveof2.jpg)
+  ![主从](../static/slaveof2.png)
 
   比如说我们在主服务器上执行以下命令
   ![主从](../static/slaveofmsg1.jpg)
