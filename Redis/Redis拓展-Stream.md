@@ -188,4 +188,173 @@ Redis最大的特性就是多出来一个数据结构Stream 一个支持多播�
 
 #### 消费组
 
+![Stream结构](../static/xiaofeizu.jpg)
 
+* Stream 通过xgroup create指令创建消费组 (Consumer Group),需要传递起始消息ID参数用来初始化last_delivered_id变量
+
+~~~
+#  表示从头开始消费
+127.0.0.1:6379> xgroup create info consumer1 0-0
+OK
+# $ 表示从尾部开始消费,只接受新消息
+127.0.0.1:6379> xgroup create info consumer2 $
+OK
+# 获取 Stream 信息
+127.0.0.1:6379> xinfo stream info
+ 1) "length"	//长度
+ 2) (integer) 4
+ 3) "radix-tree-keys"
+ 4) (integer) 1
+ 5) "radix-tree-nodes"
+ 6) (integer) 2
+ 7) "groups"	//两个消费组
+ 8) (integer) 2
+ 9) "last-generated-id"	//最后ID
+10) "1542445624498-0"
+11) "first-entry"	//第一个消息
+12) 1) "1542445226454-0"
+    2) 1) "name"
+       2) "kongming01"
+       3) "age"
+       4) "18"
+13) "last-entry"	//最后一个消息
+14) 1) "1542445624498-0"
+    2) 1) "name"
+       2) "kongming04"
+       3) "age"
+       4) "21"
+# 获取 Stream 的消费组信息
+127.0.0.1:6379> xinfo groups info
+1) 1) "name"
+   2) "consumer1"
+   3) "consumers"	//该消费组还没有消费者
+   4) (integer) 0
+   5) "pending"		//该消费组没有正在处理的消息
+   6) (integer) 0
+   7) "last-delivered-id"
+   8) "0-0"
+2) 1) "name"
+   2) "consumer2"
+   3) "consumers"
+   4) (integer) 0
+   5) "pending"
+   6) (integer) 0
+   7) "last-delivered-id"
+   8) "1542445624498-0"
+~~~
+
+#### 消费
+
+* Stream提供xreadgroup指令进行消费组内的消费
+
+* 同xread一样也可以阻塞等待新消息,读到新消息后对应的消息ID进入消费者的PEL（正在处理的消息）结构里,客户端处理完成后使用xack通知服务器 该消息从PEL中移除
+
+~~~
+# > 号表示从当前消费组的 last_delivered_id 后面开始读
+# 每当消费者读取一条消息，last_delivered_id 变量就会前进
+127.0.0.1:6379> xreadgroup GROUP consumer1 c1 count 1 streams info > 
+1) 1) "info"
+   2) 1) 1) "1542445226454-0"
+         2) 1) "name"
+            2) "kongming01"
+            3) "age"
+            4) "18"
+127.0.0.1:6379> xreadgroup GROUP consumer1 c1 count 2 streams info > 
+1) 1) "info"
+   2) 1) 1) "1542445232596-0"
+         2) 1) "name"
+            2) "kongming02"
+            3) "age"
+            4) "19"
+      2) 1) "1542445238791-0"
+         2) 1) "name"
+            2) "kongming03"
+            3) "age"
+            4) "20"
+127.0.0.1:6379> xreadgroup GROUP consumer1 c1 count 2 streams info > 
+1) 1) "info"
+   2) 1) 1) "1542445624498-0"
+         2) 1) "name"
+            2) "kongming04"
+            3) "age"
+            4) "21"
+# 继续取就没有新消息了
+127.0.0.1:6379> xreadgroup GROUP consumer1 c1 count 2 streams info > 
+(nil)
+# 阻塞等待
+127.0.0.1:6379> xreadgroup GROUP consumer1 c1 count 2 streams info > 
+(nil)
+# 另外窗口
+127.0.0.1:6379> xadd info * name kongming04 age 22
+"1542449001378-0"
+# 阻塞解除收到新消息
+127.0.0.1:6379> xreadgroup GROUP consumer1 c1 block 0 streams info  > 
+1) 1) "info"
+   2) 1) 1) "1542449001378-0"
+         2) 1) "name"
+            2) "kongming04"
+            3) "age"
+            4) "22"
+(3.82s)
+~~~
+
+###### 观察消费组信息
+
+~~~
+
+127.0.0.1:6379> xinfo groups info
+1) 1) "name"
+   2) "consumer1"
+   3) "consumers"	//一个消费者
+   4) (integer) 1
+   5) "pending"		//共5条正在处理的信息还有没有ack
+   6) (integer) 5
+   7) "last-delivered-id"
+   8) "1542449001378-0"
+2) 1) "name"
+   2) "consumer2"
+   3) "consumers"	//消费组 consumer2 没有任何变化，因为前面我们一直在操纵 consumer1
+   4) (integer) 0
+   5) "pending"
+   6) (integer) 0
+   7) "last-delivered-id"
+   8) "1542445624498-0"
+~~~
+
+###### 如果同一个消费组有多个消费者我们可以通过xinfo consumers指令观察每个消费者的状态
+
+~~~
+127.0.0.1:6379> xinfo consumers info consumer1
+1) 1) "name"
+   2) "c1"
+   3) "pending"		//共5条待处理消息
+   4) (integer) 5
+   5) "idle"
+   6) (integer) 420583	//空闲了多长时间ms没有读取消息了
+127.0.0.1:6379> xinfo consumers info consumer2
+(empty list or set)
+~~~
+
+###### ack
+
+~~~
+127.0.0.1:6379> xack info consumer1 1542449001378-0
+(integer) 1
+127.0.0.1:6379> xinfo consumers info consumer1
+1) 1) "name"
+   2) "c1"
+   3) "pending"
+   4) (integer) 4	//变成了4条
+   5) "idle"
+   6) (integer) 709057
+# ack所有
+127.0.0.1:6379> xack info consumer1 1542445226454-0 1542445232596-0 1542445238791-0 1542445624498-0
+(integer) 4
+127.0.0.1:6379> xinfo consumers info consumer1
+1) 1) "name"
+   2) "c1"
+   3) "pending"
+   4) (integer) 0
+   5) "idle"
+   6) (integer) 862854
+~~~
