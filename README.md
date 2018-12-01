@@ -16,6 +16,8 @@
   - [Redis拓展-Stream](./Redis/Redis拓展-Stream.md)
   - [Redis拓展-过期淘汰删除](./Redis/Redis拓展-过期淘汰删除.md)
 
+- Kafka
+  - [Kafka-初识](./Kafka/Kafka-初识.md)
   
 - Java
   - [Java中Calendar对日期的操作](./Java/Calendar.md)
