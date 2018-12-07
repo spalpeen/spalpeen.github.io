@@ -20,7 +20,7 @@
   - [Kafka-初识](./Kafka/Kafka-初识.md)
 
 - 设计模式
-  - [设计模式原则-单一职责](./Design/设计模式-原则.md)
+  - [设计模式-原则](./Design/设计模式-原则.md)
 
 - Java
   - [Java中Calendar对日期的操作](./Java/Calendar.md)
