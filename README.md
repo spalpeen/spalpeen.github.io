@@ -15,9 +15,10 @@
   - [Redis集群-Sentinel](./Redis/Redis集群-Sentinel.md)
   - [Redis拓展-Stream](./Redis/Redis拓展-Stream.md)
   - [Redis拓展-过期淘汰删除](./Redis/Redis拓展-过期淘汰删除.md)
-
-- Kafka
-  - [Kafka-初识](./Kafka/Kafka-初识.md)
+  
+- Queue
+  - [Queue-简介](./Queue/消息中间件.md)
+  - [Kafka-初识](./Queue/Kafka-初识.md)
 
 - 设计模式
   - [设计模式-原则](./Design/设计模式-原则.md)
