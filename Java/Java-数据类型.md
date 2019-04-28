@@ -119,6 +119,7 @@ byte b = (byte)i;
 基本类型的数据不具备“对象”的特性——不携带属性、没有方法可调用，为解决此类问题 ，Java为每种基本数据类型分别设计了对应的类，称之为包装类(Wrapper Classes)
 
 | 基本数据类型|对应的包装类|
+|-|-|
 |byte|Byte|
 |short|Short|
 |int|Integer|
