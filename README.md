@@ -32,8 +32,5 @@
   - [HTTP-协议-买个女朋友](./Http/HTTP协议-买个女朋友.md)
   
 - Java
-  - [Java中Calendar对日期的操作](./Java/Calendar.md)
+  - [Java-数据类型](./Java/Java-数据类型.md)
   - [ClassLoader加载流程及作用](./Java/ClassLoader.md)
-  - [HashMap 实现原理](./Java/HashMap.md)
-  - [Java中接口和抽象类的区别](./Java/abstract.md)
-  - [Java中静态方法与静态变量](./Java/static.md)
