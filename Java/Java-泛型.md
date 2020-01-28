@@ -120,7 +120,7 @@ nenmo.show("qianqian");
 
 #### 泛型类
 
-* ArrayList<String>对象只能添加String对象作为集合元素，但实际上系统并没有为ArrayList<String>生成新的class，而且也不会把ArrayList<String>当成新类来处理
+* `ArrayList<String>`对象只能添加String对象作为集合元素，但实际上系统并没有为`ArrayList<String>`生成新的class，而且也不会把`ArrayList<String>`当成新类来处理
 
 
 ```
@@ -221,7 +221,7 @@ public class Leg<T extends Number>{
 //Leg类的类型形参上限是Number类，T只能是Number或者Number的子类
 ```
 
-为类型形参设定多个上限
+* 为类型形参设定多个上限
 
 ```
 public class Leg<T extends Number & java.io.Serializable>{
@@ -234,20 +234,14 @@ public class Leg<T extends Number & java.io.Serializable>{
 //如果需要为类型形参指定多个上限时，所有接口上限必须位于类上限之后
 ```
 
-#### 泛型方法
+* 通配符下限: <? super Type> 表示它必须是Type本身或Type父类
 
-//todo
 
-* 定义泛型方法
-
-* 泛型方法与通配符区别
-
-* 菱形语法与泛型构造器
-
-* 通配符下限
-
-* 泛型方法与方法重载
-
-* 擦除和转换
-
-* 泛型与数组
+```
+public static <T> T dance(Collection<? super T> girl , Collection<T> nenmo)
+{
+    for(T g :nenmo){
+        //do something
+    }
+}
+```
