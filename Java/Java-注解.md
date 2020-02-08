@@ -55,37 +55,37 @@ public class Boss()
 
 ##### JDK元Annotation
 
-* JDK除了在java.lang下提供了5个基本Annotation之外，还在java.lang.annotation包下提供了6个Meta Annotation,其中5个元Annotation都用于修饰其他的Annotation定义
+* JDK除了在java.lang下提供了5个基本Annotation之外，还在java.lang.annotation包下提供了6个Meta Annotation，其中5个元Annotation都用于修饰其他的Annotation定义
 
-* @Retention :只能用于修饰Annotation定义，用于指定被修饰的Annotation可以保留多长时间，@Retention包含一个RetentionPolicy类型的value成员变量，所以使用@Retention时必须为该value成员变量指定值
+* @Retention ：只能用于修饰Annotation定义，用于指定被修饰的Annotation可以保留多长时间，@Retention包含一个RetentionPolicy类型的value成员变量，所以使用@Retention时必须为该value成员变量指定值
 
     value成员变量的值只能是如下三个：
     
-    1. RetentionPolicy.CLASS :编译器将把Annotation记录在.class中，当运行java程序，JVM不可获取Annotation信息，这是默认值
+    1. RetentionPolicy.CLASS ：编译器将把Annotation记录在.class中，当运行java程序，JVM不可获取Annotation信息，这是默认值
     
-    2. RetentionPolicy.RUNTIME :编译器将把Annotation记录在.class中，当运行java程序，JVM可获取Annotation信息，程序可通过反射获取该Annotation信息
+    2. RetentionPolicy.RUNTIME ：编译器将把Annotation记录在.class中，当运行java程序，JVM可获取Annotation信息，程序可通过反射获取该Annotation信息
     
-    3. RetentionPolicy.SOURCE : Annotation只保留在源代码中，编译器直接丢弃这种Annotation
+    3. RetentionPolicy.SOURCE ： Annotation只保留在源代码中，编译器直接丢弃这种Annotation
 
-* @Target : 只能用于修饰Annotation定义，用于指定被修饰的Annotation能用于修饰哪些程序单元，@Target元Annotation也包含一个value成员变量，值如下
+* @Target ： 只能用于修饰Annotation定义，用于指定被修饰的Annotation能用于修饰哪些程序单元，@Target元Annotation也包含一个value成员变量，值如下
 
     value成员变量值：
     
-    1. ElementType.ANNOTATION_TYPE:指定该策略的Annotation只能修饰Annotation
+    1. ElementType.ANNOTATION_TYPE：指定该策略的Annotation只能修饰Annotation
     
-    2. ElementType.CONSTRUCTOR:指定该策略的Annotation只能修饰构造器
+    2. ElementType.CONSTRUCTOR：指定该策略的Annotation只能修饰构造器
     
-    3. ElementType.FIELD:指定该策略的Annotation只能修饰成员变量
+    3. ElementType.FIELD：指定该策略的Annotation只能修饰成员变量
 
-    4. ElementType.LOCAL_VARIABLE:指定该策略的Annotation只能修饰局部变量
+    4. ElementType.LOCAL_VARIABLE：指定该策略的Annotation只能修饰局部变量
 
-    5. ElementType.METHOD:指定该策略的Annotation只能修饰方法定义
+    5. ElementType.METHOD：指定该策略的Annotation只能修饰方法定义
     
-    6. ElementType.PACKAGE:指定该策略的Annotation只能修饰包定义
+    6. ElementType.PACKAGE：指定该策略的Annotation只能修饰包定义
     
-    7. ElementType.PARAMETER:指定该策略的Annotation可以修饰参数
+    7. ElementType.PARAMETER：指定该策略的Annotation可以修饰参数
     
-    8. ElementType.TYPE:指定该策略的Annotation可以修饰类，接口，枚举
+    8. ElementType.TYPE：指定该策略的Annotation可以修饰类，接口，枚举
 ```
 @Target(ElementType.FIELD)
 public interface Nenmo{}
@@ -114,7 +114,7 @@ public @interface Nenmo
 //使用时为成员变量指定值(指定值后默认值无效)
 public class Boss
 {
-    @Nenmo(name="qianqian",age="20")
+    @Nenmo(name="qianqian"，age="20")
     public void dance()
     {
     }
@@ -140,16 +140,71 @@ public @interface Nenmo
     
     2.java5后版本在java.lang.reflect包下新增了AnnotatedElement接口，该接口代表程序中可以接受注解的程序元素，主要有以下实现类
     
-        Class:类定义
-        Constructot:构造器定义
-        Field:类的成员变量定义
-        Method:类的方法定义
-        Package:类的包定义
+        Class：类定义
+        Constructot：构造器定义
+        Field：类的成员变量定义
+        Method：类的方法定义
+        Package：类的包定义
     
     3.java5开始 java.lang.reflect包所提供的反射API增加了读取运行时Annotation的能力，只有当定义Annotation时使用了@Retention(RetentionPolicy.RUNTIME)修饰，该Annotation才会在运行时可见，JVM才会在装在.class文件时读取保存在class文件中的Annotation
 
-// todo list
+    4.提取Annotation
+    
+    ```
+    //获取Nenmo类的qianqian方法的所有注解
+    Annotation[] annotationArray = Class.forName("Nenmo").getMethod("qianqian").getAnnotation();
+    ...do something...
+    ```
+    5.演示实例
+    
+    ```
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.METHOD)
+    public @interface Nenmo
+    {
+        
+    }
+    
+    public class Boss
+    {
+        public static void sleep()
+        {
+        }
+        
+        @Nenmo
+        public static void fire()
+        {
+        }
+    }
+        
+    //注解处理工具
+    
+    public class Processor
+    {
+        public static void process(String class) 
+            throw ClassNotFoundException
+        {
+            for(Method m ： Class.froName(class).getMehtods()){
+                if(m.isAnnotationPresent(Nenmo)){
+                    System.out.println("fire");
+                }
+            }
+        }
+    }
+    ```
+    
+ AnnotationElement接口是所有程序元素（Class，Method，Constructor等）的父接口，所以程序通过反射获取某个类的AnnotationElement对象之后，程序可以调用该对象的方法获取Annotation信息
+ 
+ 1.<A extends Annotation> A getAnnotation(Class<A> extends annotationClass) ： 返回该程序元素上存在的，指定类型的注解，如果该类型的注解不存在则返回null
+ 
+ 2.<A extends Annotation> A getDeclaredAnnotation(Class<A> extends annotationClass) ： 尝试获取直接修饰该程序元素，指定类型的Annotation，如果该类型的注解不存在，则返回null
+ 
+ 3.Annotation[] getAnnotation()：返回该程序元素上存在的所有注解
+ 
+ 4.Annotation[] getDeclaredAnnotation()：返回直接修饰该程序元素所有的Annotation
+ 
+ 5.boolean isAnnotationPresent(Class<? extends Annotation> annotationClass) ：判断该程序元素上是否存在指定类型的注解
+ 
+ 6.<A extends Annotation> A[] getAnnotationsByType(Class<A> annotationClasss) ：返回该程序元素上存在的，指定类型的多个注解，如果该类型的注解不存在则返回null
 
-1.提取Annotation信息
-
-2.演示实例
+ 7.<A extends Annotation> A[] getDeclaredAnnotationByType(Class<A> annotationClasss) ： 尝试获取直接修饰该程序元素，指定类型的多个Annotation，如果该类型的注解不存在，则返回null
