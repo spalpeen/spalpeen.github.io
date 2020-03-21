@@ -14,11 +14,9 @@
 
 6.线程同步
 
-7.线程通信
+7.线程池
 
-8.线程池
-
-9.线程相关类
+8.线程相关类
 
 
 #### 线程与进程的区别及多线程的优势
@@ -446,11 +444,196 @@ public class PriorityThread extends Thread {
 ```
 
 
-
 #### 线程同步
 
-#### 线程通信
+1.java多线程安全支持同步方法synchronized关键字来修饰某个方法，该方法称为同步方法
+
+```
+public class Account {
+
+    private String accountNo;
+    private double balance;
+
+    public synchronized void draw(double drawAmount) {
+        if(balance >= drawAmount){
+            System.out.println("Success" + accountNo);
+            try {
+                Thread.sleep(1);
+                balance -= balance-drawAmount;
+            }catch (Exception e){
+            }
+        }
+        System.out.println("Error" + accountNo);
+    }
+}
+```
+
+2.对于synchronized修饰的实例方法（非static方法）而言，无需显示指定同步监视器，同步方法的同步监视器是this，也就是调用该方法的对象
+
+3.通过使用同步方法可以非常方便地实现线程安全的类，线程安全的类具有如下特称：
+
+    1）该类的对象可以被多个线程安全的访问
+
+    2）每个线程调用该对象的任意方法之后都将得到正确结果
+
+    3）每个线程调用该对象的任意方法之后，该对象依然保持合理状态
+
+4.synchronized关键字可以修饰方法，可以修饰代码块，但是不能修饰构造器，成员变量等
+
+5.释放同步监视器的锁定
+
+    1）当前线程的同步方法，同步代码块执行结束，当前线程即释放同步监视器
+
+    2）当前线程在同步代码块，同步方法中使用了break,return
+
+    3)当前线程在同步代码块，同步方法中出现了Error或Exception
+
+    4)当前线程执行同步代码块，同步方法时，程序执行了同步监视器的wait()方法
+
+6.线程不会释放同步监视器
+
+    1）当前线程执行同步代码块，同步方法时，程序调用Thread.sleep()，Thread.yield()
+
+    2）程序执行同步代码块时，其他线程调用了该线程的suspend()方法将该线程挂起
+
+7.同步锁（Lock）
+
+    1）java 5开始提供了一种功能更强大的线程同步机制，通过显示定义同步锁对象来实现同步
+
+```
+public class Account {
+    //可重入锁
+    private final ReentrantLock reentrantLock = new ReentrantLock();
+    private String accountNo;
+    private double balance;
+
+    public void draw(double drawAmount) {
+        reentrantLock.lock();
+        try {
+            if (balance >= drawAmount) {
+                System.out.println("Success" + accountNo);
+                try {
+                    Thread.sleep(1);
+                    balance -= balance - drawAmount;
+                } catch (Exception e) {
+                }
+            }
+            System.out.println("Error" + accountNo);
+        }finally {
+            reentrantLock.unlock();
+        }
+    }
+}
+```
+
+    2）Lock提供比synchronized方法和synchronized代码块更广泛的锁定操作
+
+    3）Lock是控制多线程共享资源进行访问的工具，通常锁提供了对共享资源的独占访问，每次只能有一个线程对Lock对象加锁，线程开始访问共享资源之前需要先获得Lock对象
+
 
 #### 线程池
 
+1.系统启动一个新线程涉及到操作系统交互所以成本是比较高的，所以引入线程池的概念，线程池在启动时创建大量空闲的线程，程序将一个Runnable对象或Callable对象传给线程池，线程池就会启动一个线程来执行他们的run()方法或者call()方法，当run()方法或者call()方法直接结束后，该线程并不会死亡，而是重新进入线程池中变成空闲状态
+
+2.线程池可以有效的控制系统中并发线程的数量，当系统中包含大量并发线程时，会导致系统性能剧烈下降，甚至导致JVM崩溃，而线程池的最大线程数可以控制系统中并发线程数不会超过此数
+
+3.java 5以前需要手动实现自己的线程池，从java5开始支持java内建线程池，Executors工厂类来产生线程池，该工厂类包含以下几个静态工厂方法来创建线程池：
+
+    1）newCachedThreadPool(int nThreads)：创建一个具有缓存功能的线程池，这些线程将被缓存在线程池中
+
+    2）newFixedThreadPool(int nThreads)：创建一个可重复的，具有固定线程数的线程池
+
+    3）newSingleThreadExecutor()：创建一个单线程的线程池
+
+    4）newScheduledThreadPool(int corePoolSize)：创建具有指定线程数的线程池，可以指定延迟后执行线程任务
+
+    5）newSingleThreadScheduledExecutor()：创建一个单线程的线程池，可以指定延迟后执行线程任务
+
+    6）ExecutorService newWorkStealingPool(int parallelism)：创建持有足够的线程的线程池来支持给定的并行级别，该方法还会使用多个队列来减少竞争
+
+    7）ExecutorService newWorkStealingPool()：与上一个方法相比值与CPU相同
+
+
+4.使用线程池来创建线程任务的步骤：
+
+1）调用Executors类的静态工厂方法创建一个ExecutorService对象
+
+2）创建Runnable或者Callable实现类的实例作为线程执行任务
+
+3）调用ExecutorService对象的submit()方法来提交Runnable或者Callable实例
+
+4）关闭线程池调用ExecutorService对象的showdown()方法
+
+
+```
+public class ThreadPoolTest {
+
+    private static ExecutorService threadPool = Executors.newFixedThreadPool(100);
+
+    public static void main(String[] args) {
+
+        Future<Integer> googleFuture = threadPool.submit(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return getSuggestByGoogle();
+            }
+        });
+
+        //facebook suggest
+        Future<Integer> fbFuture = threadPool.submit(new Callable<Integer>() {
+            @Override
+            public Integer call() throws Exception {
+                return getSuggestByFaceBook();
+            }
+        });
+
+        threadPool.shutdown();
+    }
+
+    private static Integer getSuggestByGoogle(){
+        return 1;
+    }
+
+    private static Integer getSuggestByFaceBook(){
+        return 2;
+    }
+}
+
+```
+
 #### 线程相关类
+
+1.java为线程安全提供了一些工具类如ThreadLocal类，ThreadLocal类代表一个线程局部变量，通过把数据放在ThreadLocal中就可以让每个线程创建一个该变量的副本，每个线程都可以独立的改变自己的副本，而不会和其他线程副本冲突，从而避免并发访问的线程安全问题
+
+2.ThreadLocal类提供了三个public方法：
+
+    1）T get()：返回此线程局部变量中当前线程副本的值
+
+    2）void remove()：删除此线程局部变量中当前线程的值
+
+    3）void set(T value)：设置此线程局部变量中当前线程副本的值
+
+
+```
+public class ThreadLocalTest extends Thread {
+
+    private Account account;
+
+    public ThreadLocalTest(Account account, String name) {
+        super(name);
+        this.account = account;
+    }
+
+
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            if (i == 5) {
+                account.setThreadLocal(getName());
+            }
+            System.out.println(account.getThreadLocal() + "i=" + i);
+        }
+    }
+}
+
+```
