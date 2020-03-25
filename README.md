@@ -48,5 +48,5 @@
   - [Java-基本注解](./Java/Java-基本注解.md)
   - [Java-输入输出](./Java/Java-输入输出.md)
   - [Java-并发执行](./Java/Java-并发执行.md)
-  - [Java-动态加载](./Java/Java-类的加载.md)
+  - [Java-类的加载](./Java/Java-类的加载.md)
   - [Java-反射机制](./Java/Java-反射机制.md)
