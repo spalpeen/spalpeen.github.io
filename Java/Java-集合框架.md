@@ -491,6 +491,10 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 * 方法剖析
 
    1.add()：add(E e)，在LinkedList的末尾插入元素，因为有last指向链表末尾，在末尾插入元素的花费是常数时间,修改几个相关引用即可；add(int index, E element)，在指定下表处插入元素，需要先通过线性查找找到具体位置，然后修改相关引用完成插入操作
+  
+
+  ![linkedListAdd](../static/linkedListAdd.png)
+
 
    ```
    //add(E e)
