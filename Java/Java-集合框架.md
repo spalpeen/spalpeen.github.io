@@ -176,6 +176,8 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
 * 如果向ArrayList或Vector中添加大量元素时可以使用ensureCapacity(int minCapacity)方法一次性的增加initialCapacity，这样可以减少重分配的次数，从而提高性能
 
+  ![ArrayList1](../static/arrayList1.png)
+
 * 如果开始就知道ArrayList或者Vector集合需要保存多少个元素，可以在创建它们时就指定initialCapacity的大小
 
 * 如果创建空的ArrayList和Vector时不指定initialCapacity参数，则Object[]数组的默认长度为10
@@ -192,12 +194,68 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
    2.Vector有很多缺点，尽量不要使用
 
-   3.ArrayList是线程不安全的，需要用程序保证集合的同步性
+   3.ArrayList是线程不安全的，ArrayList没有实现同步（synchronized），需要用程序保证集合的同步性
 
    4.Vector是线程安全的，无需程序保证该集合的同步性
 
    5.因为Vector是线程安全的所以性能比ArrayList要低
 
+* ArrayList方法剖析
+
+   1.set()：底层是数组，对指定位置的元素赋值就可
+    
+   ```
+   public E set(int index, E element) {
+      rangeCheck(index);//下标越界检查
+      E oldValue = elementData(index);
+      elementData[index] = element;//赋值到指定位置，复制的仅仅是引用
+      return oldValue;
+   }
+   ```
+
+   2.get()：由于底层是数组是Object[]，得到元素后需要进行类型转换
+
+   ```
+   public E get(int index) {
+      rangeCheck(index);//下标越界检查
+      return (E) elementData[index];//类型转换
+   }
+   ```
+
+   3.add()：与Vector不同，ArrayList没有push_back()方法，对应的方法是add(E e)，ArrayList也没有insert()方法，对应的方法是add(int index, E e)，该方法需要先对元素进行移动，然后完成插入操作，也就意味着该方法有着线性的时间复杂度，可能会导致capacity不足，因此在添加元素之前，都需要进行剩余空间检查，如果需要则自动扩容。扩容操作最终是通过grow()方法完成的
+
+  ![ArrayListAdd](../static/arrayListadd.png)
+
+  ![ArrayListAdd](../static/arrayListadd2.png)
+
+   ```
+   private void grow(int minCapacity) {
+      int oldCapacity = elementData.length;
+      int newCapacity = oldCapacity + (oldCapacity >> 1);//原来的1.5倍
+      if (newCapacity - minCapacity < 0)
+         newCapacity = minCapacity;
+      if (newCapacity - MAX_ARRAY_SIZE > 0)
+         newCapacity = hugeCapacity(minCapacity);
+      elementData = Arrays.copyOf(elementData, newCapacity);//扩展空间并复制
+   }
+   ```
+
+   4.addAll()：能够一次添加多个元素，根据位置不同也有两个版本，一个是在末尾添加的addAll(Collection<? extends E> c)方法，一个是从指定位置开始插入的addAll(int index, Collection<? extends E> c)方法。跟add()方法类似，在插入之前也需要进行空间检查，如果需要则自动扩容；如果从指定位置插入，也会存在移动元素的情况。 addAll()的时间复杂度不仅跟插入元素的多少有关，也跟插入的位置相关
+
+   5.remove()：有两个版本，一个是remove(int index)删除指定位置的元素，另一个是remove(Object o)删除第一个满足o.equals(elementData[index])的元素。删除操作是add()操作的逆过程，需要将删除点之后的元素向前移动一个位置。需要注意的是为了让GC起作用，必须显式的为最后一个位置赋null值
+
+   ```
+   public E remove(int index) {
+      rangeCheck(index);
+      modCount++;
+      E oldValue = elementData(index);
+      int numMoved = size - index - 1;
+      if (numMoved > 0)
+         System.arraycopy(elementData, index+1, elementData, index, numMoved);
+      elementData[--size] = null; //清除该位置的引用，让GC起作用
+      return oldValue;
+   }
+   ```
 
 ##### 固定长度List
 
@@ -241,6 +299,87 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
    2. 定制排序：不要求队列实现Comparabel接口，传入一个Comparator对象，负责队列中所有元素的排序
 
+* 方法剖析
+
+   1.add()，offer()：add(E e)和offer(E e)的语义相同，都是向优先队列中插入元素，只是Queue接口规定二者对插入失败时的处理不同，前者在插入失败时抛出异常，后则则会返回false
+
+   ```
+   //offer(E e)
+   public boolean offer(E e) {
+      if (e == null)//不允许放入null元素
+         throw new NullPointerException();
+      modCount++;
+      int i = size;
+      if (i >= queue.length)
+         grow(i + 1);//自动扩容
+      size = i + 1;
+      if (i == 0)//队列原来为空，这是插入的第一个元素
+         queue[0] = e;
+      else
+         siftUp(i, e);//调整
+      return true;
+   }
+
+   //siftUp()
+   private void siftUp(int k, E x) {
+      while (k > 0) {
+         int parent = (k - 1) >>> 1;//parentNo = (nodeNo-1)/2
+         Object e = queue[parent];
+         if (comparator.compare(x, (E) e) >= 0)//调用比较器的比较方法
+               break;
+         queue[k] = e;
+         k = parent;
+      }
+      queue[k] = x;
+   }
+   ```
+
+   2.element()和peek()：element()和peek()的语义完全相同，都是获取但不删除队首元素，也就是队列中权值最小的那个元素，二者唯一的区别是当方法失败时前者抛出异常，后者返回null
+
+   ```
+   //peek()
+   public E peek() {
+      if (size == 0)
+         return null;
+      return (E) queue[0];//0下标处的那个元素就是最小的那个
+   }
+   ```
+
+   3.remove()和poll()：remove()和poll()方法的语义也完全相同，都是获取并删除队首元素，区别是当方法失败时前者抛出异常，后者返回null
+
+   ```
+   public E poll() {
+      if (size == 0)
+         return null;
+      int s = --size;
+      modCount++;
+      E result = (E) queue[0];//0下标处的那个元素就是最小的那个
+      E x = (E) queue[s];
+      queue[s] = null;
+      if (s != 0)
+         siftDown(0, x);//调整
+      return result;
+   }
+
+   //remove(Object o)
+   public boolean remove(Object o) {
+	//通过遍历数组的方式找到第一个满足o.equals(queue[i])元素的下标
+      int i = indexOf(o);
+      if (i == -1)
+         return false;
+      int s = --size;
+      if (s == i) //情况1
+         queue[i] = null;
+      else {
+         E moved = (E) queue[s];
+         queue[s] = null;
+         siftDown(i, moved);//情况2
+         ......
+      }
+      return true;
+   }
+   ```
+
 ##### ArrayDeque
 
 
@@ -252,13 +391,189 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
 * ArrayList和ArrayDeque两个集合类的实现机制基本相似，它们的底层都采用一个动态的，可分配的Object[]数组来存储集合元素，当集合元素超出了该数组的容量时，系统会在底层重新分配一个Object[]数组来存储集合元素
 
+* ArrayDeque是非线程安全的，另外，该容器不允许放入null元素
+
+* 方法剖析
+
+   1.addFirst()：addFirst(E e)在Deque的首端插入元素，也就是在head的前面插入元素，在空间足够且下标没有越界的情况下，只需要将elements[--head] = e，
+
+   ```
+   //addFirst(E e)
+   public void addFirst(E e) {
+      if (e == null)//不允许放入null
+         throw new NullPointerException();
+      elements[head = (head - 1) & (elements.length - 1)] = e;//2.下标是否越界，elements数组至少有一个空位
+      if (head == tail)//1.空间是否够用
+         doubleCapacity();//扩容
+   }
+   //扩容函数doubleCapacity()
+   //doubleCapacity()
+   private void doubleCapacity() {
+      assert head == tail;
+      int p = head;
+      int n = elements.length;
+      int r = n - p; // head右边元素的个数
+      int newCapacity = n << 1;//原空间的2倍
+      if (newCapacity < 0)
+         throw new IllegalStateException("Sorry, deque too big");
+      Object[] a = new Object[newCapacity];
+      System.arraycopy(elements, p, a, 0, r);//复制右半部分
+      System.arraycopy(elements, 0, a, r, p);//复制左半部分
+      elements = (E[])a;
+      head = 0;
+      tail = n;
+   }
+   ```
+
+   2.addLast()：在Deque的尾端插入元素，如果空间已经用光，则调用doubleCapacity()进行扩容
+
+   ```
+   public void addLast(E e) {
+      if (e == null)//不允许放入null
+         throw new NullPointerException();
+      elements[tail] = e;//赋值
+      if ( (tail = (tail + 1) & (elements.length - 1)) == head)//下标越界处理
+         doubleCapacity();//扩容
+   }
+   ```
+
+   3.pollFirst()：删除并返回Deque首端元素，也即是head位置处的元素。如果容器不空，只需要直接返回elements[head]即可，当然还需要处理下标的问题，ArrayDeque中不允许放入null，当elements[head] == null时，意味着容器为空
+
+   ```
+   public E pollFirst() {
+      E result = elements[head];
+      if (result == null)//null值意味着deque为空
+         return null;
+      elements[h] = null;//let GC work
+      head = (head + 1) & (elements.length - 1);//下标越界处理
+      return result;
+   }
+   ```
+
+   4.pollLast()：删除并返回Deque尾端元素
+
+   ```
+   public E pollLast() {
+      int t = (tail - 1) & (elements.length - 1);//tail的上一个位置是最后一个元素
+      E result = elements[t];
+      if (result == null)//null值意味着deque为空
+         return null;
+      elements[t] = null;//let GC work
+      tail = t;
+      return result;
+   }
+   ```
+
+   5.peekFirst()：返回但不删除Deque首端元素
+
+   ```
+   public E peekFirst() {
+      return elements[head];
+   }
+   ```
+
+   6.peekLast()：返回但不删除Deque尾端元素
+
+   ```
+   public E peekLast() {
+      return elements[(tail - 1) & (elements.length - 1)];
+   }
+   ```
+
 
 
 ##### LinkedList
 
 * LinkedList是List接口的实现类，这意味着它是List集合，可以根据索引来访问集合中的元素，除此之外LinkedList还实现了Deque接口，可以被当做双端队列来使用，因此它既可以被当做栈来使用也可以被当做队列来使用
 
-* LinkedList与ArrayList，ArrayDeque的实现机制完全不同，ArrayList和ArrayDeque内部以数组的形式来保存集合中的元素，因此随意访问具有较好的性能，而LinkedList内部以链表的形式保存集合中的元素，随机访问性能较差，但是在插入，删除元素时性能比较出色，只需要改变指针所指地址，
+* LinkedList与ArrayList，ArrayDeque的实现机制完全不同，ArrayList和ArrayDeque内部以数组的形式来保存集合中的元素，因此随意访问具有较好的性能，而LinkedList内部以链表的形式保存集合中的元素，随机访问性能较差，但是在插入，删除元素时性能比较出色，只需要改变指针所指地址，LinkedList的实现方式决定了所有跟下标相关的操作都是线性时间，而在首段或者末尾删除元素只需要常数时间，LinkedList没有实现同步synchronized方法，需要多个线程并发访问，可以先采用Collections.synchronizedList()方法对其进行包装
+
+* 方法剖析
+
+   1.add()：add(E e)，在LinkedList的末尾插入元素，因为有last指向链表末尾，在末尾插入元素的花费是常数时间,修改几个相关引用即可；add(int index, E element)，在指定下表处插入元素，需要先通过线性查找找到具体位置，然后修改相关引用完成插入操作
+
+   ```
+   //add(E e)
+   public boolean add(E e) {
+      final Node<E> l = last;
+      final Node<E> newNode = new Node<>(l, e, null);
+      last = newNode;
+      if (l == null)
+         first = newNode;//原来链表为空，这是插入的第一个元素
+      else
+         l.next = newNode;
+      size++;
+      return true;
+   }
+
+
+   //add(int index, E element)
+   public void add(int index, E element) {
+      checkPositionIndex(index);//index >= 0 && index <= size;
+      if (index == size)//插入位置是末尾，包括列表为空的情况
+         add(element);
+      else {
+         Node<E> succ = node(index);//1.先根据index找到要插入的位置
+         //2.修改引用，完成插入操作。
+         final Node<E> pred = succ.prev;
+         final Node<E> newNode = new Node<>(pred, e, succ);
+         succ.prev = newNode;
+         if (pred == null)//插入位置为0
+            first = newNode;
+         else
+            pred.next = newNode;
+         size++;
+      }
+    }
+   ```
+
+   2.remove()：remove(Object o)删除跟指定元素相等的第一个元素，remove(int index)删除指定下标处的元素，两种方式都是线性时间复杂度
+
+   ```
+   //unlink(Node<E> x)，删除一个Node
+   E unlink(Node<E> x) {
+      final E element = x.item;
+      final Node<E> next = x.next;
+      final Node<E> prev = x.prev;
+      if (prev == null) {//删除的是第一个元素
+         first = next;
+      } else {
+         prev.next = next;
+         x.prev = null;
+      }
+      if (next == null) {//删除的是最后一个元素
+         last = prev;
+      } else {
+         next.prev = prev;
+         x.next = null;
+      }
+      x.item = null;//let GC work
+      size--;
+      return element;
+   }
+   ```
+
+   3.get()：get(int index)得到指定下标处元素的引用，通过调用上文中提到的node(int index)方法实现
+
+   ```
+   public E get(int index) {
+      checkElementIndex(index);//index >= 0 && index < size;
+      return node(index).item;
+   }
+   ```
+
+   4.set()：set(int index, E element)方法将指定下标处的元素修改成指定值，也是先通过node(int index)找到对应下表元素的引用，然后修改Node中item的值
+
+   ```
+   public E set(int index, E element) {
+      checkElementIndex(index);
+      Node<E> x = node(index);
+      E oldVal = x.item;
+      x.item = element;//替换新值
+      return oldVal;
+   }
+   ```
+
 
 
 ##### 各种线性表的性能分析
@@ -429,6 +744,99 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
 * 如果自定义类作为TreeMap的key， 且想让TreeMap良好的工作，则重写该类的equals()和compareTo()时应保持一致的返回结果：两个key通过equals()比较时返回true，通过compareTo()比较时返回0，如果equals()和compareTo()返回结果不一致，TreeMap与Map接口的规则就会冲突
 
+* containsKey(), get(), put(), remove()都有着log(n)的时间复杂度
+
+* 方法剖析
+
+   1.get()：get(Object key)方法根据指定的key值返回对应的value，根据key的自然顺序（或者比较器顺序）对二叉查找树进行查找
+
+   ```
+   //getEntry()方法
+   final Entry<K,V> getEntry(Object key) {
+   ......
+      if (key == null)//不允许key值为null
+         throw new NullPointerException();
+      Comparable<? super K> k = (Comparable<? super K>) key;//使用元素的自然顺序
+      Entry<K,V> p = root;
+      while (p != null) {
+         int cmp = k.compareTo(p.key);
+         if (cmp < 0)//向左找
+               p = p.left;
+         else if (cmp > 0)//向右找
+               p = p.right;
+         else
+               return p;
+      }
+      return null;
+   }
+   ```
+
+   2.put()：put(K key, V value)方法是将指定的key, value对添加到map里，首先会对map做一次查找，看是否包含该元组，如果已经包含则直接返回，如果没有找到则会在红黑树中插入新的entry，如果插入之后破坏了红黑树的约束条件，还需要进行旋转
+
+   ```
+   public V put(K key, V value) {
+	......
+      int cmp;
+      Entry<K,V> parent;
+      if (key == null)
+         throw new NullPointerException();
+      Comparable<? super K> k = (Comparable<? super K>) key;//使用元素的自然顺序
+      do {
+         parent = t;
+         cmp = k.compareTo(t.key);
+         if (cmp < 0) t = t.left;//向左找
+         else if (cmp > 0) t = t.right;//向右找
+         else return t.setValue(value);
+      } while (t != null);
+      Entry<K,V> e = new Entry<>(key, value, parent);//创建并插入新的entry
+      if (cmp < 0) parent.left = e;
+      else parent.right = e;
+      fixAfterInsertion(e);//调整
+      size++;
+      return null;
+   }
+   ```
+
+   3.remove()：remove(Object key)的作用是删除key值对应的entry
+
+   ```
+   // 红黑树entry删除函数deleteEntry()
+   private void deleteEntry(Entry<K,V> p) {
+      modCount++;
+      size--;
+      if (p.left != null && p.right != null) {// 2. 删除点p的左右子树都非空。
+         Entry<K,V> s = successor(p);// 后继
+         p.key = s.key;
+         p.value = s.value;
+         p = s;
+      }
+      Entry<K,V> replacement = (p.left != null ? p.left : p.right);
+      if (replacement != null) {// 1. 删除点p只有一棵子树非空。
+         replacement.parent = p.parent;
+         if (p.parent == null)
+               root = replacement;
+         else if (p == p.parent.left)
+               p.parent.left  = replacement;
+         else
+               p.parent.right = replacement;
+         p.left = p.right = p.parent = null;
+         if (p.color == BLACK)
+               fixAfterDeletion(replacement);// 调整
+      } else if (p.parent == null) {
+         root = null;
+      } else { // 1. 删除点p的左右子树都为空
+         if (p.color == BLACK)
+               fixAfterDeletion(p);// 调整
+         if (p.parent != null) {
+               if (p == p.parent.left)
+                  p.parent.left = null;
+               else if (p == p.parent.right)
+                  p.parent.right = null;
+               p.parent = null;
+         }
+      }
+   }
+   ```
 
 ##### WeakHashMap
 
