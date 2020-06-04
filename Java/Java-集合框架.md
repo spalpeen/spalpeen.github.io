@@ -642,11 +642,15 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
       HashMap数组的每一个元素不止是一个Entry对象，还是一个链表的头节点，每一个Entry对象通过next指针指向它的下一个Entry节点，当新来的Entry映射到冲突的数组位置只要插入到链表的头部就可以了（头插法 之所以采用头插法是认为后插入的Entry被查找的可能性更大）
 
+      ![HashMapPut](../static/HashMapPut.png)
+
    2. get：当使用get根据Key来查找Value的时候 首先会把输入的Key做一次Hash映射
  
       index=Hash("hello")
  
       这时就需要根据对应Entry的头节点一直向下查找
+
+      ![HashMapGet](../static/HashMapGet.png)
 
 * HashMap的容量是有限的 当多次插入元素时 HashMap达到一定的饱和度，Key映射位置发生冲突的几率会逐渐提高 这个时候HashMap需要扩展它的长度 也就是进行resize 而发生redize的因素有两个：
 
