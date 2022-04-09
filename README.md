@@ -37,7 +37,7 @@
 - HTTP
   - [HTTP-状态码](./Http/HTTP状态码.md)
   - [HTTP-区别](./Http/HTTP区别.md)
-  - [HTTP-协议-买个女朋友](./Http/HTTP协议-买个女朋友.md)
+  - [HTTP-协议](./Http/HTTP协议.md)
   
 - Java
   - [Java-数据类型](./Java/Java-数据类型.md)
