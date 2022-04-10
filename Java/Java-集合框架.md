@@ -80,6 +80,8 @@ Map体系继承树
 
    Object hight() ： 返回指定元素之后的元素
 
+* TreeSet 支持自然顺序访问，但是添加，删除，包含等操作要相对低效（long(n)时间）
+
 * TreeSet 支持两种排序方式：自然排序，定制排序
 
    1.自然排序
@@ -192,13 +194,15 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
 
    1.ArrayList和Vector在用法上几乎相同，但vector是一个很古老的集合，从JDK1.0开始就有了
 
-   2.Vector有很多缺点，尽量不要使用
+   2.Vector有很多缺点，尽量不要使用，可以根据需要自动增加容量，当数组已满时，会创建新的数组，扩容提高一倍并拷贝原有数组数据
 
    3.ArrayList是线程不安全的，ArrayList没有实现同步（synchronized），需要用程序保证集合的同步性
 
    4.Vector是线程安全的，无需程序保证该集合的同步性
 
    5.因为Vector是线程安全的所以性能比ArrayList要低
+
+   6.ArrayList在扩容时增加50%
 
 * ArrayList方法剖析
 
