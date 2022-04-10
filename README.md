@@ -15,31 +15,8 @@
   - [Redis集群-Sentinel](./Redis/Redis集群-Sentinel.md)
   - [Redis拓展-Stream](./Redis/Redis拓展-Stream.md)
   - [Redis拓展-过期淘汰删除](./Redis/Redis拓展-过期淘汰删除.md)
-  
-- Queue
-  - [Queue-简介](./Queue/消息中间件.md)
-  - [Kafka-初识](./Queue/Kafka-初识.md)
-  
-- RPC
-   - [RPC-介绍](./RPC/RPC介绍.md)
-   - [gRPC-简介](./RPC/gRPC简介.md)
-
-- 设计模式
-  - [设计模式-原则](./Design/设计模式-原则.md)
-  - [设计模式-单例](./Design/设计模式-单例.md)
-  - [设计模式-工厂](./Design/设计模式-工厂.md)
-  - [设计模式-抽象工厂](./Design/设计模式-抽象工厂.md)
-  - [设计模式-模板方法](./Design/设计模式-模板方法.md)
-  - [设计模式-建造者模式](./Design/设计模式-建造者.md)
-  - [设计模式-代理模式](./Design/设计模式-代理.md)
-  - [设计模式-原型模式](./Design/设计模式-原型.md)
-
-- HTTP
-  - [HTTP-状态码](./Http/HTTP状态码.md)
-  - [HTTP-区别](./Http/HTTP区别.md)
-  - [HTTP-协议](./Http/HTTP协议.md)
-  
-- Java
+ 
+ - Java
   - [Java-数据类型](./Java/Java-数据类型.md)
   - [Java-面向对象](./Java/Java-面向对象.md)
   - [Java-集合框架](./Java/Java-集合框架.md)
@@ -51,3 +28,30 @@
   - [Java-类的加载](./Java/Java-类的加载.md)
   - [Java-反射机制](./Java/Java-反射机制.md)
   - [Java-动态代理](./Java/Java-动态代理.md)
+ 
+- 设计模式
+  - [设计模式-原则](./Design/设计模式-原则.md)
+  - [设计模式-单例](./Design/设计模式-单例.md)
+  - [设计模式-工厂](./Design/设计模式-工厂.md)
+  - [设计模式-抽象工厂](./Design/设计模式-抽象工厂.md)
+  - [设计模式-模板方法](./Design/设计模式-模板方法.md)
+  - [设计模式-建造者模式](./Design/设计模式-建造者.md)
+  - [设计模式-代理模式](./Design/设计模式-代理.md)
+  - [设计模式-原型模式](./Design/设计模式-原型.md)
+
+
+- Queue
+  - [Queue-简介](./Queue/消息中间件.md)
+  - [Kafka-初识](./Queue/Kafka-初识.md)
+  
+- RPC
+   - [RPC-介绍](./RPC/RPC介绍.md)
+   - [gRPC-简介](./RPC/gRPC简介.md)
+
+
+- HTTP
+  - [HTTP-状态码](./Http/HTTP状态码.md)
+  - [HTTP-区别](./Http/HTTP区别.md)
+  - [HTTP-协议](./Http/HTTP协议.md)
+  
+
