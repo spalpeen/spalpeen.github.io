@@ -677,25 +677,31 @@ SortedSet s = Collections.synchronizedSortedSet(new TreeSet(...));
  
    1. ConurrentHashMap：
 
-      ConcurrentHashMap集合中有2的n次方个Segment 共同保存在一个名为Segments的数组当中，Segment本身就相当于一个HashMap对象，同HashMap一样，Segment包含一个HashEntry数组，数组中每一个HashEntry即时一个键值对也是一个链表的头节点
- 
-   2. 可以看成ConcurrentHashMap是一个二级的哈希表 在一个总的哈希表下面有若干个子哈希表
- 
-   3. ConcurrentHashMap的优势就是常采用锁分段技术 每一个Segment就好比一个自治区 读写操作高度自治
+      ConcurrentHashMap集合中有2的n次方个Segment 共同保存在一个名为Segments的数组当中
+   
+   2. Segment：
 
-   4. ConcurrentHashMap的put方法
+      Segment本身就相当于一个HashMap对象，同HashMap一样，Segment包含一个HashEntry数组，数组中每一个HashEntry即时一个键值对也是一个链表的头节点，HashEntry内部使用volatile的value字段来保证可见性，也利用了不可变对象的机制以改进利用Unsafe提供的底层能力，比如volatile access去直接完成部分操作，以优化性能，毕竟Unsafe中的很多操作都是JVM intrinsic优化过的
+ 
+   3. 可以看成ConcurrentHashMap是一个二级的哈希表 在一个总的哈希表下面有若干个子哈希表
+ 
+   4. ConcurrentHashMap的优势就是常采用锁分段技术 每一个Segment就好比一个自治区 读写操作高度自治
+
+   5. ConcurrentHashMap的put方法
  
       1).为输入的key做哈希运算，得到hash值
  
       2).通过hash值定位到对应的Segment
  
-      3).获取可重入锁
+      3).获取可重入锁，保证唯一性，java 8以前 Segment本身基于ReentrantLock的扩展实现，所以并发期间Segment是锁定的。java 8以后使用优化过的synchronized，相比于ReenRrantLock节省了内存的开销，（锁的颗粒度是加在链表头上）
  
       4).再次通过hash值定位到Segment当中数组的具体位置
  
       5).插入或覆盖HashEntry对象
  
       6).释放锁
+
+      ![HashMapPut](../static/concurrentHashMap.png)
 
 
 ##### Hashtable
